@@ -9,10 +9,10 @@ from email.header import Header
 import qrcode
 import io
 import base64
-import threading
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # ------------ Models ------------
@@ -48,17 +48,12 @@ def send_email(to, subject, body):
 
 # ------------ Reminder Scheduler ------------
 def schedule_alert(email, end_time, name, slot, booking_id):
-    # Calculate the reminder time, 5 minutes before the parking session ends
     reminder_time = end_time - timedelta(minutes=5)
-    
-    # Ensure the reminder time is after the current time
     delay = (reminder_time - datetime.utcnow()).total_seconds()
 
-    # If delay is less than 0, it means the reminder time has already passed
     if delay < 0:
         return
 
-    # Function that sends the alert email
     def alert():
         subject = "⏰ Parking Time Ending Soon"
         body = f"""Hi {name},
@@ -74,7 +69,6 @@ http://localhost:5000/exit/{booking_id}
 Thanks for using Smart Parking!"""
         send_email(email, subject, body)
 
-    # Use threading to send the email after the calculated delay
     threading.Timer(delay, alert).start()
 
 # ------------ Slot Assignment ------------
@@ -124,14 +118,12 @@ def book():
     start = booking.start_time
     end = start + timedelta(minutes=parking_time)
 
-    # Confirmation Email
     send_email(
         email,
         "✅ Parking Slot Booked",
         f"Hi {name},\n\nYour parking slot {slot} is confirmed for {parking_time} mins in {area}.\n\nThanks for using Smart Parking!"
     )
 
-    # Schedule Reminder
     schedule_alert(email, end, name, slot, booking.id)
 
     return redirect(url_for('index'))
@@ -178,17 +170,15 @@ def exit_parking(booking_id):
 
     return redirect(url_for('index'))
 
-
 @app.route('/pay/<int:booking_id>')
 def payment_qr(booking_id):
     booking = Booking.query.get_or_404(booking_id)
 
-    amount = "5.00"  # You can calculate dynamically if needed
+    amount = "5.00"
     upi_id = "8309841877@ibl"
     payee_name = "Smart Parking"
     upi_link = f"upi://pay?pa={upi_id}&pn={payee_name}&am={amount}&cu=INR"
 
-    # Generate QR as base64
     qr = qrcode.make(upi_link)
     img_io = io.BytesIO()
     qr.save(img_io, format='PNG')
@@ -207,12 +197,10 @@ def payment_confirm(booking_id):
         f"Hi {booking.name},\n\nYour payment for slot {booking.slot} has been successfully received.\n\nThanks for using Smart Parking!"
     )
 
-    
     return redirect(url_for('index'))
-
 
 # ------------ Run App ------------
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
+        db.create_all()  # Ensure the database and tables are created
     app.run(debug=True)

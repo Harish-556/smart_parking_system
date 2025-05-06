@@ -9,6 +9,7 @@ from email.header import Header
 import qrcode
 import io
 import base64
+import os
 
 app = Flask(_name_)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -203,6 +204,5 @@ def payment_confirm(booking_id):
 if _name_ == '_main_':
     with app.app_context():
         db.create_all()  # Ensure the database and tables are created
- import os 
 port = int(os.environ.get("PORT", 5000)) 
 app.run(debug=True, host='0.0.0.0', port=port)

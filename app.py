@@ -11,7 +11,7 @@ import io
 import base64
 import os
 
-app = Flask(_name_)
+app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -201,7 +201,7 @@ def payment_confirm(booking_id):
     return redirect(url_for('index'))
 
 # ------------ Run App ------------
-if _name_ == '_main_':
+if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Ensure the database and tables are created
 port = int(os.environ.get("PORT", 5000)) 

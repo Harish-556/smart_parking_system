@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Extend Parking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .extension-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            padding: 30px 40px;
+            text-align: center;
+            width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            animation: slideIn 0.6s ease forwards;
+            transform: translateY(50px);
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            color: #f1f1f1;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #ddd;
+        }
+
+        label {
+            display: block;
+            margin-top: 25px;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #f0f0f0;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f0f0f0;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 12px 0;
+            font-size: 16px;
+            background: #00c6ff;
+            background: linear-gradient(60deg, #fd0f07, #0026ff);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #ffae00, #345edd);
+        }
+
+        .cancel-btn {
+            background: #ff4e50;
+            background: linear-gradient(to right, #ff6a00, #ee0979);
+            padding : 20px;
+            text-decoration:none;
+            color:white;
+            font-weight : bold;
+            border-radius: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: linear-gradient(to right, #ee0979, #ff6a00);
+        }
+
+        .emoji {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="extension-card">
+        <div class="emoji">⏳</div>
+        <h2>Extend Your Parking</h2>
+        <p><strong>Slot:</strong> {{ booking.slot }}</p>
+        <p><strong>Current Time:</strong> {{ booking.parking_time }} mins</p>
+
+        <form method="post">
+            <label for="extra_time">Extra Time (in minutes):</label>
+            <input type="number" name="extra_time" min="5" max="180" required>
+
+            <div class="button-group">
+                <button type="submit">✅ Confirm</button>
+                <a href="{{ url_for('payment_qr', booking_id=booking.id) }}" class="cancel-btn">💳 Pay & Exit</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

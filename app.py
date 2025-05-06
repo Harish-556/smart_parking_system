@@ -10,7 +10,7 @@ import qrcode
 import io
 import base64
 
-app = Flask(__name__)
+app = Flask(_name_)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -200,9 +200,9 @@ def payment_confirm(booking_id):
     return redirect(url_for('index'))
 
 # ------------ Run App ------------
-if __name__ == '__main__':
+if _name_ == '_main_':
     with app.app_context():
         db.create_all()  # Ensure the database and tables are created
-    import os
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+ import os 
+port = int(os.environ.get("PORT", 5000)) 
+app.run(debug=True, host='0.0.0.0', port=port)
